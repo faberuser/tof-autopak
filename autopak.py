@@ -128,20 +128,9 @@ def encode_files(file_list, decode=False):
     return files_not_found
 
 
-def select_directory():
-    root = Tk()
-    root.withdraw()
-    try:
-        directory = filedialog.askdirectory()
-    except TypeError:
-        print("No directory selected, exiting...")
-        return
-    return directory
-
-
 def clear_meipass():
     try:
-        open(sys._MEIPASS + '/is_autopak', 'a').close()
+        open(sys._MEIPASS + '/is_tof_autopak', 'a').close()
 
         base_path = (sys._MEIPASS).split("\\")
         base_path.pop(-1)
@@ -152,15 +141,15 @@ def clear_meipass():
         mei_folders = [f for f in glob(temp_path + "**/", recursive=False)]
         for item in mei_folders:
             if item.find('_MEI') != -1 and item != sys._MEIPASS + "\\":
-                if os.path.exists(item + '/is_autopak'):
+                if os.path.exists(item + '/is_tof_autopak'):
                     rmtree(item)
     except AttributeError:
         pass
 
 
 def load_config():
-    if os.path.exists(application_path + '/autopak_conf.env'):
-        load_dotenv(application_path + '/autopak_conf.env')
+    if os.path.exists(os.path.join(application_path, 'autopak_conf.env')):
+        load_dotenv(os.path.join(application_path, 'autopak_conf.env'))
         disable_share = os.getenv('DISABLE_SHARE') == 'True'
         game_install_path = os.getenv('GAME_INSTALL_PATH')
         return disable_share, game_install_path
@@ -180,38 +169,29 @@ def load_config():
             else:
                 game_install_path = game_install_path + '/Hotta/Content'
 
-        with open(application_path + '/autopak_conf.env', 'a') as f:
+        with open(os.path.join(application_path, 'autopak_conf.env'), 'a') as f:
             f.write(
                 f"DISABLE_SHARE=True\nGAME_INSTALL_PATH={game_install_path}")
 
         return True, game_install_path
 
 
-def extract_datas():
-    if not os.path.isdir(application_path + "/Engine"):
-        copytree(working_dir + "/Engine", application_path + "/Engine")
-
-    if not os.path.isdir(application_path + "/Share Disable"):
-        copytree(working_dir + "/Share Disable",
-                 application_path + "/Share Disable")
-
-
 def main():
     clear_meipass()
-    extract_datas()
 
-    engine_path = application_path + "/Engine/Binaries/Win64/UnrealPak.exe"
-    disable_share_path = application_path + "/Share Disable"
+    engine_path = os.path.join(
+        working_dir, "Engine/Binaries/Win64/UnrealPak.exe")
+    disable_share_path = os.path.join(working_dir, "Share Disable")
 
     disable_share, game_install_path = load_config()
     if not disable_share or not game_install_path:
         print("An error occurred while loading the config, exiting...")
-        input("\nEnter any key to exit")
+        input("\nEnter any key to exit...")
         return
 
     # No argument given
     if len(sys.argv) != 2:
-        input("Drag .uasset files or a folder onto this script to run it.\nEnter any key to exit ")
+        input("Drag .uasset files or a folder onto this script to run it.\nEnter any key to exit...")
         return
 
     file_list = []
@@ -235,14 +215,14 @@ def main():
             print(file)
         print("\nThe files above were not encoded since they were not found. Verify the file name or path.")
         print("\nIf run with autopak.bat, the pak file generated will not work")
-        input("\nEnter any key to exit")
+        input("\nEnter any key to exit...")
         return
     else:
         print("Files encoded successfully\n")
 
     mods_install_folder = "PatchPaks"
 
-    with open(application_path + "/autopak_filelist.txt", "w") as f:
+    with open(os.path.join(working_dir, "autopak_filelist.txt"), "w") as f:
         f.write(f'"{mod_folder}\*.*" "../../../" -compress')
 
     if os.path.exists(game_install_path):
@@ -282,7 +262,7 @@ def main():
                 if not os.listdir(dir_path):  # check if directory is empty
                     os.rmdir(dir_path)
 
-    input("\nEnter any key to exit")
+    input("\nEnter any key to exit...")
 
 
 if __name__ == "__main__":
