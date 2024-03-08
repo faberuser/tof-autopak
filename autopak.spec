@@ -5,7 +5,7 @@ a = Analysis(
     ['autopak.py'],
     pathex=[],
     binaries=[],
-    datas=[('Engine', 'Engine'), ('Share Disable', 'Share Disable')],
+    datas=[('datas', 'datas')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

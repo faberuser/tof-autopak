@@ -151,8 +151,9 @@ def load_config():
     if os.path.exists(os.path.join(application_path, 'autopak_conf.env')):
         load_dotenv(os.path.join(application_path, 'autopak_conf.env'))
         disable_share = os.getenv('DISABLE_SHARE') == 'True'
+        smol_sig = os.getenv('SMOL_SIG') == 'True'
         game_install_path = os.getenv('GAME_INSTALL_PATH')
-        return disable_share, game_install_path
+        return disable_share, game_install_path, smol_sig
     else:
         print("Config file not found. Select game installation path to create config file.")
         root = Tk()
@@ -171,7 +172,7 @@ def load_config():
 
         with open(os.path.join(application_path, 'autopak_conf.env'), 'a') as f:
             f.write(
-                f"DISABLE_SHARE=True\nGAME_INSTALL_PATH={game_install_path}")
+                f"DISABLE_SHARE=True\nSMOL_SIG=True\nGAME_INSTALL_PATH={game_install_path}")
 
         return True, game_install_path
 
@@ -180,10 +181,10 @@ def main():
     clear_meipass()
 
     engine_path = os.path.join(
-        working_dir, "Engine/Binaries/Win64/UnrealPak.exe")
-    disable_share_path = os.path.join(working_dir, "Share Disable")
+        working_dir, "datas/Engine/Binaries/Win64/UnrealPak.exe")
+    disable_share_path = os.path.join(working_dir, "datas/Share Disable")
 
-    disable_share, game_install_path = load_config()
+    disable_share, game_install_path, smol_sig = load_config()
     if not disable_share or not game_install_path:
         print("An error occurred while loading the config, exiting...")
         input("\nEnter any key to exit...")
@@ -221,15 +222,19 @@ def main():
         print("Files encoded successfully\n")
 
     mods_install_folder = "PatchPaks"
+    autopak_filelist_parent = "../../../../"
 
     with open(os.path.join(working_dir, "autopak_filelist.txt"), "w") as f:
-        f.write(f'"{mod_folder}\*.*" "../../../" -compress')
+        f.write(f'"{mod_folder}\*.*" "{autopak_filelist_parent}" -compress')
 
     if os.path.exists(game_install_path):
         mods_install_folder_path = os.path.join(
             game_install_path, mods_install_folder)
         sig_file_path = os.path.join(
             game_install_path, "Paks/Hotta-WindowsNoEditor.sig")
+        if smol_sig:
+            sig_file_path = os.path.join(
+                working_dir, "datas/Hotta-WindowsNoEditor.sig")
 
         modname = os.path.basename(mod_folder).replace(' ', '')
         pakfile_path = os.path.join(
@@ -242,12 +247,13 @@ def main():
             print("To change where mods are created, change the mods_install_folder variable in autopak.py in the Scripts folder.")
             os.makedirs(mods_install_folder_path)
 
-        run([engine_path, pakfile_path, "-Create=../../../autopak_filelist.txt"])
+        run([engine_path, pakfile_path,
+            f"-Create={autopak_filelist_parent}autopak_filelist.txt"])
         copy(sig_file_path, new_sig_path)
     else:
         print("Invalid game install path. Using default destination. Sig file not created.")
         run([engine_path, f"{mod_folder}.pak",
-            "-Create=../../../autopak_filelist.txt"])
+            f"-Create={autopak_filelist_parent}autopak_filelist.txt"])
 
     if disable_share:
         share_disable_path = os.path.join(
