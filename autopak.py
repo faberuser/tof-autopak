@@ -222,10 +222,10 @@ def main():
         print("Files encoded successfully\n")
 
     mods_install_folder = "PatchPaks"
-    autopak_filelist_parent = "../../../../"
+    filelist_parent = "../../../../"
 
-    with open(os.path.join(working_dir, "autopak_filelist.txt"), "w") as f:
-        f.write(f'"{mod_folder}\*.*" "{autopak_filelist_parent}" -compress')
+    with open(os.path.join(working_dir, "filelist.txt"), "w") as f:
+        f.write(f'"{mod_folder}\*.*" "../../../" -compress')
 
     if os.path.exists(game_install_path):
         mods_install_folder_path = os.path.join(
@@ -247,13 +247,15 @@ def main():
             print("To change where mods are created, change the mods_install_folder variable in autopak.py in the Scripts folder.")
             os.makedirs(mods_install_folder_path)
 
+        huh = f"-Create={filelist_parent}filelist.txt"
+        print(huh)
         run([engine_path, pakfile_path,
-            f"-Create={autopak_filelist_parent}autopak_filelist.txt"])
+            huh])
         copy(sig_file_path, new_sig_path)
     else:
         print("Invalid game install path. Using default destination. Sig file not created.")
         run([engine_path, f"{mod_folder}.pak",
-            f"-Create={autopak_filelist_parent}autopak_filelist.txt"])
+            f"-Create={filelist_parent}filelist.txt"])
 
     if disable_share:
         share_disable_path = os.path.join(

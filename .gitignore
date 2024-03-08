@@ -3,5 +3,5 @@ venv
 __pycache__
 dist
 build
-autopak_filelist.txt
+filelist.txt
 autopak_conf.env
