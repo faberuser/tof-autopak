@@ -238,9 +238,9 @@ def main():
 
         modname = os.path.basename(mod_folder).replace(' ', '')
         pakfile_path = os.path.join(
-            mods_install_folder_path, f"Hotta-WindowsNoEditor_{modname}_P.pak")
+            mods_install_folder_path, f"Hotta-WindowsNoEditor_{modname}_1_P.pak")
         new_sig_path = os.path.join(
-            mods_install_folder_path, f"Hotta-WindowsNoEditor_{modname}_P.sig")
+            mods_install_folder_path, f"Hotta-WindowsNoEditor_{modname}_1_P.sig")
 
         if not os.path.exists(mods_install_folder_path):
             print("Installed mods folder does not exist, creating PatchPaks folder")
