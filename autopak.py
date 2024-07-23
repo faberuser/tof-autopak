@@ -174,7 +174,7 @@ def load_config():
             f.write(
                 f"DISABLE_SHARE=True\nSMOL_SIG=True\nGAME_INSTALL_PATH={game_install_path}")
 
-        return True, game_install_path
+        return True, game_install_path, True
 
 
 def main():
